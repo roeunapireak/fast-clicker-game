@@ -7,6 +7,8 @@ background_color = (200,255,255)
 yellow = (255, 255, 0)
 black = (0,0,0)
 blue = (80, 80, 255)
+red = (255, 0, 0)
+green = (0, 255, 0)
 
 
 
@@ -28,6 +30,12 @@ class Area():
 
     def outline(self, frame_color, thickness):
         pygame.draw.rect(window, frame_color, self.rect, thickness)
+
+    def color(self, new_color):
+        self.fill_color = new_color
+
+    def is_collide(self, x, y):
+        return self.rect.collidepoint(x, y)
 
 
 ''' Label Class '''
@@ -52,12 +60,45 @@ for i in range(num_cards):
 
    x = x + 100
 
+from random import randint
+
+wait = 0
 
 ''' game loop '''
 while True:
 
-    for card in cards:
-        card.draw(10,40)
+    if wait == 0:
+        wait = 20
+        random_index = randint(1, num_cards)
+
+        for index in range(num_cards):
+            cards[index].color(yellow)
+
+            if (index + 1) == random_index:
+                cards[index].draw(10, 40)
+
+            else:
+                cards[index].fill()
+    else:
+        wait -= 1
+
+
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            x,y = event.pos
+
+            for index in range(num_cards):
+
+                if cards[index].is_collide(x, y):
+                    
+                    # if clicked then show GREEN, if not show RED
+                    if (index + 1) == random_index:
+                        cards[index].color(green)
+                    else:
+                        cards[index].color(red)
+
+                    cards[index].fill()
+
 
 
     pygame.display.update()
